@@ -1,9 +1,10 @@
-import { lazy, Suspense } from "react";
-import { motion, type Variants } from "framer-motion";
-import { ArrowDown, ArrowRight, MessageCircle } from "lucide-react";
+import { lazy, Suspense, useRef } from "react";
+import { motion, useMotionValue, useScroll, useSpring, useTransform, type Variants } from "framer-motion";
+import { ArrowDown, /* ArrowRight, */ MessageCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { useIsTouchDevice, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 const HeroCanvas = lazy(() => import("@/components/three/HeroCanvas").then((m) => ({ default: m.HeroCanvas })));
 
@@ -15,13 +16,41 @@ const container: Variants = {
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE_OUT } },
+  hidden: { opacity: 0, y: 28, rotateX: -40, filter: "blur(8px)" },
+  visible: { opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)", transition: { duration: 0.9, ease: EASE_OUT } },
 };
 
+const SPRING = { stiffness: 90, damping: 20, mass: 0.6 };
+
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isTouch = useIsTouchDevice();
+  const reducedMotion = usePrefersReducedMotion();
+  const interactive = !isTouch && !reducedMotion;
+
+  // Scroll: the text block tips back into the screen and fades as you leave the hero.
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const exitRotateX = useTransform(scrollYProgress, [0, 1], [0, 28]);
+  const exitY = useTransform(scrollYProgress, [0, 1], [0, 140]);
+  const exitScale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const exitOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+
+  // Pointer: a gentle 3D lean toward the cursor.
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const leanY = useSpring(useTransform(mx, [-1, 1], [-6, 6]), SPRING);
+  const leanX = useSpring(useTransform(my, [-1, 1], [5, -5]), SPRING);
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!interactive) return;
+    mx.set((e.clientX / window.innerWidth) * 2 - 1);
+    my.set((e.clientY / window.innerHeight) * 2 - 1);
+  };
+
   return (
     <section
+      ref={sectionRef}
+      onPointerMove={handlePointerMove}
       id="home"
       className="relative flex min-h-[100svh] items-center overflow-hidden bg-radial-glow bg-grid pt-28"
       aria-label="Introduction"
@@ -32,8 +61,21 @@ export function Hero() {
         </Suspense>
       </div>
 
-      <div className="container-page relative z-10">
-        <motion.div variants={container} initial="hidden" animate="visible" className="max-w-2xl">
+      <div className="container-page relative z-10 [perspective:1200px]">
+        <motion.div
+          style={
+            reducedMotion
+              ? undefined
+              : { rotateX: exitRotateX, y: exitY, scale: exitScale, opacity: exitOpacity, transformOrigin: "50% 0%" }
+          }
+        >
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="visible"
+          style={interactive ? { rotateX: leanX, rotateY: leanY, transformStyle: "preserve-3d" } : undefined}
+          className="max-w-2xl [transform-origin:0%_50%]"
+        >
           <motion.p variants={item} className="section-label mb-6 flex items-center gap-3">
             <span className="h-px w-8 bg-[color:var(--color-accent-2)]" />
             {siteConfig.title}
@@ -69,15 +111,16 @@ export function Hero() {
               Start a Project
             </MagneticButton>
 
-            <MagneticButton
+            {/* <MagneticButton
               as="a"
               href="#work"
               className="border border-[color:var(--color-border-strong)] text-[color:var(--color-ink)] hover:border-[color:var(--color-accent-2)]/60"
             >
               Explore My Work
               <ArrowRight size={16} />
-            </MagneticButton>
+            </MagneticButton> */}
           </motion.div>
+        </motion.div>
         </motion.div>
       </div>
 

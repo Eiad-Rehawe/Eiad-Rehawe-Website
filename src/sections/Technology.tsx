@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { technologyCategories } from "@/data/technology";
 
 export function Technology() {
@@ -8,7 +8,7 @@ export function Technology() {
     <section id="technology" className="relative py-24 sm:py-32" aria-label="Technology stack">
       <div className="container-page">
         <SectionHeading
-          index="05"
+          index="04"
           label="Technology"
           title="The Technology Behind The Work."
           description="Proven tools, chosen deliberately for the problem at hand — not for the sake of using them."
@@ -19,22 +19,17 @@ export function Technology() {
             const Icon = category.icon;
             return (
               <Reveal key={category.id} delay={i * 0.06}>
-                <motion.div
-                  whileHover={{ y: -6 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                  className="glass-panel group relative h-full overflow-hidden rounded-2xl p-6"
-                >
-                  <div
-                    className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[color:var(--color-accent)]/0 blur-2xl transition-all duration-500 group-hover:bg-[color:var(--color-accent)]/12"
-                    aria-hidden="true"
-                  />
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[color:var(--color-border)] text-[color:var(--color-accent-2)]">
+                <TiltCard className="glass-panel group rounded-2xl p-6">
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
+                    <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[color:var(--color-accent)]/0 blur-2xl transition-all duration-500 group-hover:bg-[color:var(--color-accent)]/15" />
+                  </div>
+                  <div className="depth-2 mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[color:var(--color-border)] text-[color:var(--color-accent-2)]">
                     <Icon size={20} strokeWidth={1.75} />
                   </div>
-                  <h3 className="font-[var(--font-display)] text-lg font-medium text-[color:var(--color-ink)]">
+                  <h3 className="depth-1 font-[var(--font-display)] text-lg font-medium text-[color:var(--color-ink)]">
                     {category.title}
                   </h3>
-                  <ul className="mt-4 flex flex-wrap gap-2">
+                  <ul className="depth-1 mt-4 flex flex-wrap gap-2">
                     {category.items.map((item) => (
                       <li
                         key={item}
@@ -44,7 +39,7 @@ export function Technology() {
                       </li>
                     ))}
                   </ul>
-                </motion.div>
+                </TiltCard>
               </Reveal>
             );
           })}

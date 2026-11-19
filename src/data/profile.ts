@@ -4,10 +4,10 @@
  */
 
 export const stats = [
-  { label: "Customers", value: 20, suffix: "+" },
+  // { label: "Customers", value: 20, suffix: "+" },
   // { label: "Technologies", value: 15, suffix: "+" },
-  { label: "Years of Experience", value: 5, suffix: "+" },
-  { label: "Project Built", value: 10, suffix: "+" },
+  { label: "Years of Experience", value: 4, suffix: "+" },
+  // { label: "Project Built", value: 10, suffix: "+" },
 ] as const;
 
 export const trustPoints = [

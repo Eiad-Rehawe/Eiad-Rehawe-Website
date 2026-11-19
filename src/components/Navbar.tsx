@@ -4,8 +4,8 @@ import { useState } from "react";
 import { siteConfig } from "@/config/site";
 import { useScrolled } from "@/hooks/useScrollProgress";
 import { cn } from "@/lib/utils";
-import { MagneticButton } from "@/components/ui/MagneticButton";
-import { createWhatsAppLink } from "@/lib/whatsapp";
+// import { MagneticButton } from "@/components/ui/MagneticButton";
+// import { createWhatsAppLink } from "@/lib/whatsapp";
 
 export function Navbar() {
   const scrolled = useScrolled();
@@ -42,7 +42,7 @@ export function Navbar() {
             className="font-[var(--font-display)] text-sm font-semibold tracking-widest text-[color:var(--color-ink)]"
             data-cursor="interactive"
           >
-            EIAD<span className="text-[color:var(--color-accent-2)]">.</span>REHAWE
+            Eiad<span className="text-[color:var(--color-accent-2)]"> </span>Rehawe
           </a>
 
           <ul className="hidden items-center gap-8 lg:flex">
@@ -63,7 +63,7 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden lg:block">
+          {/* <div className="hidden lg:block">
             <MagneticButton
               as="a"
               href={createWhatsAppLink(siteConfig.whatsappMessages.hero)}
@@ -74,7 +74,7 @@ export function Navbar() {
             >
               Let's Talk
             </MagneticButton>
-          </div>
+          </div> */}
 
           <button
             type="button"
@@ -112,14 +112,14 @@ export function Navbar() {
                   {item.label}
                 </a>
               ))}
-              <a
+              {/* <a
                 href={createWhatsAppLink(siteConfig.whatsappMessages.hero)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary mt-2 rounded-lg px-3 py-3 text-center text-sm font-medium"
               >
                 Let's Talk
-              </a>
+              </a> */}
             </div>
           </motion.div>
         )}

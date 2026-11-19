@@ -142,6 +142,84 @@ function CoreNode() {
   );
 }
 
+/** Slowly counter-rotating wireframe shell around the network. */
+function GeoShell() {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((_, delta) => {
+    if (!ref.current) return;
+    ref.current.rotation.x -= delta * 0.05;
+    ref.current.rotation.y -= delta * 0.08;
+  });
+  return (
+    <mesh ref={ref}>
+      <icosahedronGeometry args={[2.25, 1]} />
+      <meshBasicMaterial color="#6f93ff" wireframe transparent opacity={0.07} />
+    </mesh>
+  );
+}
+
+/** Tilted orbit rings with a satellite riding each one. */
+function OrbitRing({ radius, tilt, speed, color }: { radius: number; tilt: [number, number]; speed: number; color: string }) {
+  const ringRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (ringRef.current) ringRef.current.rotation.z += delta * speed;
+  });
+  return (
+    <group rotation={[tilt[0], tilt[1], 0]}>
+      <group ref={ringRef}>
+        <mesh>
+          <torusGeometry args={[radius, 0.004, 8, 160]} />
+          <meshBasicMaterial color={color} transparent opacity={0.35} />
+        </mesh>
+        <mesh position={[radius, 0, 0]}>
+          <sphereGeometry args={[0.045, 16, 16]} />
+          <meshBasicMaterial color={color} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+const SATELLITES: { position: [number, number, number]; kind: "octa" | "tetra" | "box" | "torus"; scale: number; color: string }[] = [
+  { position: [-2.4, 1.3, -0.6], kind: "octa", scale: 0.22, color: "#22d3ee" },
+  { position: [2.5, -1.2, 0.4], kind: "tetra", scale: 0.26, color: "#6f93ff" },
+  { position: [2.1, 1.6, -1], kind: "box", scale: 0.18, color: "#3b6dfb" },
+  { position: [-2.1, -1.6, 0.6], kind: "torus", scale: 0.2, color: "#22d3ee" },
+];
+
+/** Glossy low-poly solids floating around the core. */
+function FloatingSolids({ count }: { count: number }) {
+  return (
+    <>
+      {SATELLITES.slice(0, count).map((sat, i) => (
+        <Float key={i} speed={1.6 + i * 0.3} rotationIntensity={1.6} floatIntensity={1.4}>
+          <mesh position={sat.position} scale={sat.scale}>
+            {sat.kind === "octa" && <octahedronGeometry args={[1, 0]} />}
+            {sat.kind === "tetra" && <tetrahedronGeometry args={[1, 0]} />}
+            {sat.kind === "box" && <boxGeometry args={[1, 1, 1]} />}
+            {sat.kind === "torus" && <torusGeometry args={[0.8, 0.3, 16, 40]} />}
+            <meshStandardMaterial
+              color="#0b1c4a"
+              emissive={sat.color}
+              emissiveIntensity={0.35}
+              metalness={0.85}
+              roughness={0.2}
+              flatShading
+            />
+          </mesh>
+          <mesh position={sat.position} scale={sat.scale * 1.02}>
+            {sat.kind === "octa" && <octahedronGeometry args={[1, 0]} />}
+            {sat.kind === "tetra" && <tetrahedronGeometry args={[1, 0]} />}
+            {sat.kind === "box" && <boxGeometry args={[1, 1, 1]} />}
+            {sat.kind === "torus" && <torusGeometry args={[0.8, 0.3, 8, 20]} />}
+            <meshBasicMaterial color={sat.color} wireframe transparent opacity={0.5} />
+          </mesh>
+        </Float>
+      ))}
+    </>
+  );
+}
+
 export function HeroScene({ pointer, scrollRef, tier }: HeroSceneProps) {
   const config = TIER_CONFIG[tier];
   const rootRef = useRef<THREE.Group>(null);
@@ -178,8 +256,13 @@ export function HeroScene({ pointer, scrollRef, tier }: HeroSceneProps) {
           <CoreNode />
           <NetworkNodes nodes={nodes} />
           <ConnectionLines positions={connections} />
+          <GeoShell />
+          <OrbitRing radius={1.05} tilt={[1.1, 0.3]} speed={0.6} color="#22d3ee" />
+          <OrbitRing radius={2.0} tilt={[-0.5, 0.9]} speed={-0.35} color="#6f93ff" />
         </group>
       </Float>
+
+      <FloatingSolids count={tier === "desktop" ? 4 : 2} />
 
       <ParticleField count={config.particles} />
     </>

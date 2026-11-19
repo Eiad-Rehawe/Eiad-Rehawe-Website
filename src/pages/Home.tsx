@@ -3,7 +3,7 @@ import { TrustStrip } from "@/sections/TrustStrip";
 import { ClientProblems } from "@/sections/ClientProblems";
 import { Services } from "@/sections/Services";
 import { WhyWorkWithMe } from "@/sections/WhyWorkWithMe";
-import { SelectedWork } from "@/sections/SelectedWork";
+// import { SelectedWork } from "@/sections/SelectedWork";
 import { Technology } from "@/sections/Technology";
 import { EngineeringPipeline } from "@/sections/EngineeringPipeline";
 import { Process } from "@/sections/Process";
@@ -19,7 +19,7 @@ export function Home() {
       <ClientProblems />
       <Services />
       <WhyWorkWithMe />
-      <SelectedWork />
+      {/* <SelectedWork /> */}
       <Technology />
       <EngineeringPipeline />
       <Process />

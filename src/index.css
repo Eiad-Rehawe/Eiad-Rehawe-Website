@@ -61,6 +61,25 @@
   }
 }
 
+/* 3D keyframes live outside @theme so they are never tree-shaken. */
+@keyframes spin3d {
+  from {
+    transform: rotateX(-20deg) rotateY(0deg) rotateZ(10deg);
+  }
+  to {
+    transform: rotateX(340deg) rotateY(360deg) rotateZ(370deg);
+  }
+}
+
+@keyframes orbit-tilt {
+  from {
+    transform: rotateX(70deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(70deg) rotateZ(360deg);
+  }
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -200,6 +219,123 @@
   .btn-primary {
     background: linear-gradient(135deg, var(--color-accent) 0%, color-mix(in oklab, var(--color-accent) 75%, var(--color-accent-2)) 100%);
     color: #f7faff;
+  }
+
+  /* ---------- 3D motion system ---------- */
+
+  .tilt-card {
+    transform-style: preserve-3d;
+  }
+
+  .depth-1 {
+    transform: translateZ(28px);
+  }
+  .depth-2 {
+    transform: translateZ(48px);
+  }
+
+  .shape-spin {
+    transform-style: preserve-3d;
+    animation: spin3d 24s linear infinite;
+  }
+
+  .shape-cube {
+    --s: 80px;
+    position: relative;
+    width: var(--s);
+    height: var(--s);
+    transform-style: preserve-3d;
+  }
+  .shape-cube .face {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in oklab, var(--color-accent-soft) 45%, transparent);
+    background: linear-gradient(135deg, color-mix(in oklab, var(--color-accent) 10%, transparent), transparent 70%);
+    box-shadow: inset 0 0 24px -8px color-mix(in oklab, var(--color-accent-2) 40%, transparent);
+  }
+  .shape-cube .face-front {
+    transform: translateZ(calc(var(--s) / 2));
+  }
+  .shape-cube .face-back {
+    transform: rotateY(180deg) translateZ(calc(var(--s) / 2));
+  }
+  .shape-cube .face-right {
+    transform: rotateY(90deg) translateZ(calc(var(--s) / 2));
+  }
+  .shape-cube .face-left {
+    transform: rotateY(-90deg) translateZ(calc(var(--s) / 2));
+  }
+  .shape-cube .face-top {
+    transform: rotateX(90deg) translateZ(calc(var(--s) / 2));
+  }
+  .shape-cube .face-bottom {
+    transform: rotateX(-90deg) translateZ(calc(var(--s) / 2));
+  }
+
+  .shape-gyro,
+  .shape-prism {
+    position: relative;
+    transform-style: preserve-3d;
+  }
+  .shape-gyro span {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--color-accent-2) 40%, transparent);
+  }
+  .shape-gyro span.ring-x {
+    border-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
+  }
+  .shape-prism span {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in oklab, var(--color-accent-soft) 40%, transparent);
+    border-radius: 0.6rem;
+  }
+
+  .cube-logo {
+    --s: 7rem;
+    position: relative;
+    width: var(--s);
+    height: var(--s);
+    transform-style: preserve-3d;
+    animation: spin3d 18s linear infinite;
+  }
+  .cube-logo > span {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in oklab, var(--color-accent) 45%, transparent);
+    background: color-mix(in oklab, var(--color-surface) 70%, transparent);
+    box-shadow: inset 0 0 40px -10px color-mix(in oklab, var(--color-accent) 60%, transparent);
+    backface-visibility: visible;
+  }
+  .cube-logo > span:nth-child(1) {
+    transform: translateZ(calc(var(--s) / 2));
+  }
+  .cube-logo > span:nth-child(2) {
+    transform: rotateY(180deg) translateZ(calc(var(--s) / 2));
+  }
+  .cube-logo > span:nth-child(3) {
+    transform: rotateY(90deg) translateZ(calc(var(--s) / 2));
+  }
+  .cube-logo > span:nth-child(4) {
+    transform: rotateY(-90deg) translateZ(calc(var(--s) / 2));
+  }
+  .cube-logo > span:nth-child(5) {
+    transform: rotateX(90deg) translateZ(calc(var(--s) / 2));
+  }
+  .cube-logo > span:nth-child(6) {
+    transform: rotateX(-90deg) translateZ(calc(var(--s) / 2));
+  }
+
+  .orbit-ring {
+    position: absolute;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--color-accent-2) 30%, transparent);
+    transform-style: preserve-3d;
   }
 
   .safe-b {
